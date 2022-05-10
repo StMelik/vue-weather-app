@@ -25,7 +25,7 @@
       <div class="details-weather__group">
         <div class="details-weather__icon details-weather__icon-evaporator"></div>
         <p class="details-weather__title">Осадки</p>
-        <p class="details-weather__body">Без осадков</p>
+        <p class="details-weather__body">{{ currentWeatherCondition }}</p>
       </div>
       <div class="details-weather__group">
         <div class="details-weather__icon details-weather__icon-wind"></div>
@@ -102,6 +102,23 @@ export default {
         return "шторм"
       } else {
         return "ураган"
+      }
+    },
+    currentWeatherCondition() {
+      const id = this.getCurrentWeather.weather[0].id
+      console.log(id)
+      if (id < 240) {
+        return "Гроза"
+      } else if (id < 330) {
+        return "Морось"
+      } else if (id < 540) {
+        return "Дождь"
+      } else if (id < 630) {
+        return "Снег"
+      } else if (id < 790) {
+        return "Туман"
+      } else {
+        return "Без осадков"
       }
     }
   },
