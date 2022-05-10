@@ -3,14 +3,22 @@
     <img class="header__logo" src="@/assets/images/logo.svg" alt="">
     <h1 class="header__title">Vue weather</h1>
     <button class="header__button"></button>
-    <select name="city" id="city" class="header__select">
+    <select name="city" id="city" class="header__select" @change="$emit('onSelect', $event.target.value)">
       <option value="" disabled selected>Выбрать город</option>
+      <option value="Краснодар">Краснодар</option>
+      <option value="Москва">Москва</option>
+      <option value="Киев">Киев</option>
+      <option value="Ейск">Ейск</option>
+      <option value="Белгород">Белгород</option>
+      <option value="Перу">Перу</option>
     </select>
   </header>
 </template>
 
 <script>
-export default {}
+export default {
+
+}
 </script>
 
 <style scoped>
