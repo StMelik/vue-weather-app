@@ -4,7 +4,9 @@ import fetchCoordinates from "@/utils/fetchCoordinates";
 
 export default createStore({
     state: {
-        isLoading: true
+        isLoading: true,
+        isFavoriteCity: false,
+        favoriteCites: ['Краснодар', 'Москва', 'Перу']
     },
     getters: {
         getCurrentWeather(state) {
@@ -16,6 +18,12 @@ export default createStore({
         getCityName(state) {
             return state.cityName
         },
+        getFavoriteCites(state) {
+            return state.favoriteCites
+        },
+        getIsFavoriteCites(state) {
+            return state.isFavoriteCity
+        }
     },
     mutations: {
         SET_WEATHER(state, payload) {
@@ -26,6 +34,15 @@ export default createStore({
         },
         SET_CITY_NAME(state, payload) {
             state.cityName = payload
+        },
+        SET_IS_FAVORITE_CITY(state, payload) {
+            state.isFavoriteCity = payload
+        },
+        ADD_FAVORITES_CITES(state, payload) {
+            state.favoriteCites.push(payload)
+        },
+        REMOVE_FAVORITES_CITES(state, payload) {
+            state.favoriteCites = state.favoriteCites.filter(city => city !== payload)
         },
     },
     actions: {

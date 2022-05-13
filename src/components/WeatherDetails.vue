@@ -4,11 +4,18 @@
       <div class="now-weather__top">
         <p class="now-weather__top-temp">{{ currentTemp }}°</p>
         <p class="now-weather__top-text">Сегодня</p>
-        <p class="now-weather__top-icon"></p>
+        <p class="now-weather__top-icon" :style="currentWeatherIcon"></p>
       </div>
       <div class="now-weather__bottom">
         <p class="now-weather__bottom-text">Время: {{ currentTime }}</p>
-        <p class="now-weather__bottom-text">Город: {{ cityName }}</p>
+        <div class="now-weather__city-box">
+          <p class="now-weather__bottom-text">Город: {{ cityName }}</p>
+          <button
+              class="now-weather__city-button"
+              :class="isFavoriteCity && 'now-weather__city-button_active'"
+              @click="changeFavorite"
+          ></button>
+        </div>
       </div>
     </div>
     <div class="weather__details details-weather">
@@ -38,10 +45,33 @@
 
 <script>
 import {mapGetters} from "vuex";
+import formatDataWeatherMixin from "@/mixins/formatDataWeatherMixin";
 
 export default {
+  mixins: [formatDataWeatherMixin],
+
+  methods: {
+    changeFavorite() {
+      if (this.isFavoriteCity) { // если в избранном
+        this.$store.commit('SET_IS_FAVORITE_CITY', false)
+        this.$store.commit('REMOVE_FAVORITES_CITES', this.cityName)
+      } else { // если не в избранном
+        this.$store.commit('SET_IS_FAVORITE_CITY', true)
+        this.$store.commit('ADD_FAVORITES_CITES', this.cityName)
+      }
+
+    }
+  },
+
   computed: {
-    ...mapGetters(['getCurrentWeather', 'getCityName']),
+    ...mapGetters(['getCurrentWeather', 'getCityName', 'getIsFavoriteCites', 'getFavoriteCites']),
+
+    isFavoriteCity() {
+      return this.getIsFavoriteCites
+    },
+    favoriteCites() {
+      return this.getFavoriteCites
+    },
     cityName() {
       return this.getCityName
     },
@@ -52,77 +82,39 @@ export default {
       return Math.round(this.getCurrentWeather['feels_like'])
     },
     currentTime() {
-      const date = new Date(this.getCurrentWeather.dt * 1000)
-      return date.toLocaleString("ru", {hour: 'numeric', minute: 'numeric'})
+      return this.time(this.getCurrentWeather.dt)
     },
     currentPressure() {
-      return Math.round(this.getCurrentWeather.pressure / 1.333)
+      return this.weatherPressure(this.getCurrentWeather.pressure)
     },
     currentPressureStatus() {
-      return (this.currentPressure < 750)
-          ? "пониженное"
-          : (this.currentPressure > 770)
-              ? "повышенное"
-              : "нормальное"
+      return this.pressureStatus(this.currentPressure)
     },
     currentWindSpeed() {
       return Math.round(this.getCurrentWeather["wind_speed"])
     },
     currentWindRoute() {
-      const windDeg = this.getCurrentWeather['wind_deg']
-      if (windDeg > 22 && windDeg <= 67) {
-        return "северо-восток"
-      } else if (windDeg > 67 && windDeg <= 112) {
-        return "восток"
-      } else if (windDeg > 112 && windDeg <= 157) {
-        return "юго-восток"
-      } else if (windDeg > 157 && windDeg <= 202) {
-        return "юг"
-      } else if (windDeg > 202 && windDeg <= 247) {
-        return "юго-запад"
-      } else if (windDeg > 247 && windDeg <= 292) {
-        return "запад"
-      } else if (windDeg > 292 && windDeg <= 337) {
-        return "северо-запад"
-      } else {
-        return "север"
-      }
+      return this.windRoute(this.getCurrentWeather['wind_deg'])
     },
     currentWindStatus() {
-      const windSpeed = this.getCurrentWeather["wind_speed"];
-      if (windSpeed < 0.49) {
-        return "штиль"
-      } else if (windSpeed < 2) {
-        return "тихий ветер"
-      } else if (windSpeed < 8) {
-        return "слабый ветер"
-      } else if (windSpeed < 17) {
-        return "сильный ветер"
-      } else if (windSpeed < 28) {
-        return "шторм"
-      } else {
-        return "ураган"
-      }
+      return this.windStatus(this.getCurrentWeather["wind_speed"])
     },
     currentWeatherCondition() {
       const id = this.getCurrentWeather.weather[0].id
-      console.log(id)
-      if (id < 240) {
-        return "Гроза"
-      } else if (id < 330) {
-        return "Морось"
-      } else if (id < 540) {
-        return "Дождь"
-      } else if (id < 630) {
-        return "Снег"
-      } else if (id < 790) {
-        return "Туман"
-      } else {
-        return "Без осадков"
-      }
+      return this.weatherCondition(id)
+    },
+    currentWeatherIcon() {
+      const iconId = this.getCurrentWeather.weather[0].icon
+      return this.weatherIcon(iconId)
     }
   },
-
+  created() {
+    if (this.favoriteCites.includes(this.cityName)) {
+      this.$store.commit('SET_IS_FAVORITE_CITY', true)
+    } else {
+      this.$store.commit('SET_IS_FAVORITE_CITY', false)
+    }
+  }
 }
 </script>
 
@@ -187,6 +179,28 @@ export default {
 
 .now-weather__bottom-text:not(:last-of-type) {
   margin-bottom: 15px;
+}
+
+.now-weather__city-box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 15px;
+  margin-top: 15px;
+}
+
+.now-weather__city-button {
+  width: 30px;
+  height: 30px;
+  background-image: url("@/assets/images/star-icon.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  cursor: pointer;
+}
+
+.now-weather__city-button_active {
+  background-image: url("@/assets/images/star-active-icon.svg");
 }
 
 /*--------------*/
