@@ -1,24 +1,26 @@
-# vue-weather-app
+# Проект: Погода
 
-## Project setup
-```
-npm install
-```
+## Описание
+Приложение позволяет узнать текущуюю погоду и погоду на неделю.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+Данное приложение было написано с целью закрепления полученных знаний о фреймворке Vue 3.
 
-### Compiles and minifies for production
-```
-npm run build
-```
+## Функциональность
+* Отображение погода - текущая/неделя
+* Поиск городов
+* Добавление городов в избранное
+* Сохранение избранных городов в локальном хранилище
 
-### Lints and fixes files
-```
-npm run lint
-```
+    #### В разработке
+* Смена темы приложения
+* Погода на месяц
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Технологии
+* HTML
+* CSS
+* JavaScript
+* Vue 3
+* Vuex
+
+### GH-Pages
+[Ссылка на проект](https://stmelik.github.io/vue-weather-app/)
