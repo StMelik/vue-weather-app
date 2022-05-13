@@ -67,7 +67,13 @@ export default {
         this.$store.commit('SET_IS_FAVORITE_CITY', true)
         this.$store.commit('ADD_FAVORITES_CITES', this.cityName)
       }
-
+    },
+    checkCity() {
+      if (this.favoriteCites.includes(this.cityName)) {
+        this.$store.commit('SET_IS_FAVORITE_CITY', true)
+      } else {
+        this.$store.commit('SET_IS_FAVORITE_CITY', false)
+      }
     }
   },
 
@@ -120,11 +126,10 @@ export default {
     }
   },
   created() {
-    if (this.favoriteCites.includes(this.cityName)) {
-      this.$store.commit('SET_IS_FAVORITE_CITY', true)
-    } else {
-      this.$store.commit('SET_IS_FAVORITE_CITY', false)
-    }
+    this.checkCity()
+  },
+  updated() {
+    this.checkCity()
   }
 }
 </script>
