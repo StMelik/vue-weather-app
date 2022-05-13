@@ -1,43 +1,49 @@
 <template>
   <div class="weather">
     <div class="weather__now now-weather">
-      <div class="now-weather__top">
-        <p class="now-weather__top-temp">{{ currentTemp }}°</p>
-        <p class="now-weather__top-text">Сегодня</p>
-        <p class="now-weather__top-icon" :style="currentWeatherIcon"></p>
-      </div>
-      <div class="now-weather__bottom">
-        <p class="now-weather__bottom-text">Время: {{ currentTime }}</p>
-        <div class="now-weather__city-box">
-          <p class="now-weather__bottom-text">Город: {{ cityName }}</p>
-          <button
-              class="now-weather__city-button"
-              :class="isFavoriteCity && 'now-weather__city-button_active'"
-              @click="changeFavorite"
-          ></button>
+      <MyPreloader v-if="isLoading" />
+      <div v-else class="now-weather__wrapper">
+        <div class="now-weather__top">
+          <p class="now-weather__top-temp">{{ currentTemp }}°</p>
+          <p class="now-weather__top-text">Сегодня</p>
+          <p class="now-weather__top-icon" :style="currentWeatherIcon"></p>
+        </div>
+        <div class="now-weather__bottom">
+          <p class="now-weather__bottom-text">Время: {{ currentTime }}</p>
+          <div class="now-weather__city-box">
+            <p class="now-weather__bottom-text">Город: {{ cityName }}</p>
+            <button
+                class="now-weather__city-button"
+                :class="isFavoriteCity && 'now-weather__city-button_active'"
+                @click="changeFavorite"
+            ></button>
+          </div>
         </div>
       </div>
     </div>
     <div class="weather__details details-weather">
-      <div class="details-weather__group">
-        <div class="details-weather__icon details-weather__icon-temp"></div>
-        <p class="details-weather__title">Температура</p>
-        <p class="details-weather__body">{{ currentTemp }}° - ощущается как {{ currentFeelsLikeTemp }}°</p>
-      </div>
-      <div class="details-weather__group">
-        <div class="details-weather__icon details-weather__icon-humidity"></div>
-        <p class="details-weather__title">Давление </p>
-        <p class="details-weather__body">{{ currentPressure }} мм ртутного столба - {{ currentPressureStatus }}</p>
-      </div>
-      <div class="details-weather__group">
-        <div class="details-weather__icon details-weather__icon-evaporator"></div>
-        <p class="details-weather__title">Осадки</p>
-        <p class="details-weather__body">{{ currentWeatherCondition }}</p>
-      </div>
-      <div class="details-weather__group">
-        <div class="details-weather__icon details-weather__icon-wind"></div>
-        <p class="details-weather__title">Ветер</p>
-        <p class="details-weather__body">{{ currentWindSpeed }} м/с {{ currentWindRoute }} - {{ currentWindStatus }}</p>
+      <MyPreloader v-if="isLoading" />
+      <div v-else class="details-weather__wrapper">
+        <div class="details-weather__group">
+          <div class="details-weather__icon details-weather__icon-temp"></div>
+          <p class="details-weather__title">Температура</p>
+          <p class="details-weather__body">{{ currentTemp }}° - ощущается как {{ currentFeelsLikeTemp }}°</p>
+        </div>
+        <div class="details-weather__group">
+          <div class="details-weather__icon details-weather__icon-humidity"></div>
+          <p class="details-weather__title">Давление </p>
+          <p class="details-weather__body">{{ currentPressure }} мм ртутного столба - {{ currentPressureStatus }}</p>
+        </div>
+        <div class="details-weather__group">
+          <div class="details-weather__icon details-weather__icon-evaporator"></div>
+          <p class="details-weather__title">Осадки</p>
+          <p class="details-weather__body">{{ currentWeatherCondition }}</p>
+        </div>
+        <div class="details-weather__group">
+          <div class="details-weather__icon details-weather__icon-wind"></div>
+          <p class="details-weather__title">Ветер</p>
+          <p class="details-weather__body">{{ currentWindSpeed }} м/с {{ currentWindRoute }} - {{ currentWindStatus }}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -46,8 +52,10 @@
 <script>
 import {mapGetters} from "vuex";
 import formatDataWeatherMixin from "@/mixins/formatDataWeatherMixin";
+import MyPreloader from "@/components/MyPreloader";
 
 export default {
+  components: {MyPreloader},
   mixins: [formatDataWeatherMixin],
 
   methods: {
@@ -64,8 +72,11 @@ export default {
   },
 
   computed: {
-    ...mapGetters(['getCurrentWeather', 'getCityName', 'getIsFavoriteCites', 'getFavoriteCites']),
+    ...mapGetters(['getCurrentWeather', 'getCityName', 'getIsFavoriteCites', 'getFavoriteCites', 'getIsLoading']),
 
+    isLoading() {
+      return this.getIsLoading
+    },
     isFavoriteCity() {
       return this.getIsFavoriteCites
     },
@@ -132,6 +143,7 @@ export default {
   border-radius: 20px;
   padding: 20px;
   width: 400px;
+  position: relative;
 }
 
 .now-weather__top {
@@ -213,10 +225,13 @@ export default {
   padding: 30px 40px;
   width: 750px;
   position: relative;
+  overflow: hidden;
+}
+
+.details-weather__wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  overflow: hidden;
 }
 
 .details-weather::after {

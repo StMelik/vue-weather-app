@@ -4,12 +4,12 @@
       v-model:select="selectedCity"
       @submit="submit"
   />
-  <div v-if="!isLoading">
+<!--  <div v-if="!isLoading">-->
     <WeatherDetails/>
     <NavBar/>
     <OnWeek/>
-  </div>
-  <h2 class="loader" v-else>Загрузка...</h2>
+<!--  </div>-->
+<!--  <h2 class="loader" v-else>Загрузка...</h2>-->
 </template>
 
 <script>
