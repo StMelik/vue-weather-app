@@ -207,7 +207,7 @@ export default {
 
 
 .details-weather {
-  background: #4F4F4F;
+  background-color: #4F4F4F;
   box-shadow: 2px 5px 25px -3px rgba(180, 180, 180, 0.25);
   border-radius: 20px;
   padding: 30px 40px;
@@ -216,9 +216,10 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  overflow: hidden;
 }
 
-.details-weather::before {
+.details-weather::after {
   content: '';
   position: absolute;
   top: 0;
@@ -229,12 +230,15 @@ export default {
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
+  filter: brightness(0.7);
 }
 
 .details-weather__group {
   display: flex;
   column-gap: 20px;
   align-items: center;
+  /*position: relative;*/
+  z-index: 5;
 }
 
 .details-weather__group:not(:last-child) {
