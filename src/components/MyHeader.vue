@@ -2,13 +2,13 @@
   <header class="header">
     <img class="header__logo" src="@/assets/images/logo.svg" alt="Логотип">
     <h1 class="header__title">Vue weather</h1>
-    <form class="header__form" @submit.prevent="$emit('submit')">
+    <form class="header__form" @submit.prevent="$emit('submitSearchQuery')">
       <input
           type="text"
           class="header__input"
           placeholder="Поиск..."
-          :value="search"
-          @input="$emit('update:search', $event.target.value)"
+          :value="searchQuery"
+          @input="SET_SEARCH_QUERY($event.target.value)"
           required
       >
       <button class="header__submit"></button>
@@ -18,8 +18,8 @@
         name="city"
         id="city"
         class="header__select"
-        :value="select"
-        @change="$emit('update:select', $event.target.value)"
+        :value="selectedCity"
+        @change="SET_SELECTED_CITY($event.target.value)"
     >
       <option value="" disabled selected>Избранные</option>
       <option
@@ -32,18 +32,19 @@
 </template>
 
 <script>
+import {mapState, mapMutations} from "vuex";
+
 export default {
-  props: {
-    search: String,
-    select: String,
+  methods: {
+    ...mapMutations(['SET_SELECTED_CITY', 'SET_SEARCH_QUERY'])
   },
+
   computed: {
-    favoriteCites() {
-      return this.$store.getters.getFavoriteCites
-    }
-  },
-  mounted() {
-    console.log(this.$store.getters.getFavoriteCites)
+    ...mapState({
+      searchQuery: state => state.searchQuery,
+      selectedCity: state => state.selectedCity,
+      favoriteCites: state => state.favorite.favoriteCites
+    }),
   }
 }
 </script>

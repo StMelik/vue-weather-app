@@ -1,20 +1,37 @@
 export default {
-    methods: {
-        time(sec) {
+    namespaced: true,
+    getters: {
+        getTime(state, getters, rootState) {
+            const sec = rootState.weather.current.dt
             const date = new Date(sec * 1000)
             return date.toLocaleString("ru", {hour: 'numeric', minute: 'numeric'})
         },
-        weatherPressure(pressure) {
+        getTemperature(state, getters, rootState) {
+            const temperature = rootState.weather.current.temp
+            return Math.round(temperature)
+        },
+        getFeelsLikeTemperature(state, getters, rootState) {
+            const feelsLikeTemperature = rootState.weather.current['feels_like']
+            return Math.round(feelsLikeTemperature)
+        },
+        getWeatherPressure(state, getters, rootState) {
+            const pressure = rootState.weather.current.pressure
             return Math.round(pressure / 1.333)
         },
-        pressureStatus(pressure) {
+        getPressureStatus(state, getters, rootState) {
+            const pressure = rootState.weather.current.pressure
             return (pressure < 750)
                 ? "пониженное"
                 : (pressure > 770)
                     ? "повышенное"
                     : "нормальное"
         },
-        windRoute(route) {
+        getWindSpeed(state, getters, rootState) {
+            const windSpeed = rootState.weather.current['wind_speed']
+            return Math.round(windSpeed)
+        },
+        getWindRoute(state, getters, rootState) {
+            const route = rootState.weather.current['wind_deg']
             if (route > 22 && route <= 67) {
                 return "северо-восток"
             } else if (route > 67 && route <= 112) {
@@ -33,7 +50,8 @@ export default {
                 return "север"
             }
         },
-        windStatus(windSpeed) {
+        getWindStatus(state, getters, rootState) {
+            const windSpeed = rootState.weather.current['wind_speed']
             if (windSpeed < 0.49) {
                 return "штиль"
             } else if (windSpeed < 2) {
@@ -48,8 +66,8 @@ export default {
                 return "ураган"
             }
         },
-        weatherCondition(id) {
-            console.log(id)
+        getWeatherCondition(state, getters, rootState) {
+            const id = rootState.weather.current.weather[0].id
             if (id < 240) {
                 return "Гроза"
             } else if (id < 330) {
@@ -64,8 +82,9 @@ export default {
                 return "Без осадков"
             }
         },
-        weatherIcon(iconId) {
+        getWeatherIcon(state, getters, rootState) {
+            const iconId = rootState.weather.current.weather[0].icon
             return {backgroundImage: `url(http://openweathermap.org/img/wn/${iconId}@2x.png)`}
         }
-    },
+    }
 }

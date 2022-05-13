@@ -4,18 +4,18 @@
       <MyPreloader v-if="isLoading" />
       <div v-else class="now-weather__wrapper">
         <div class="now-weather__top">
-          <p class="now-weather__top-temp">{{ currentTemp }}°</p>
+          <p class="now-weather__top-temp">{{ temperature }}°</p>
           <p class="now-weather__top-text">Сегодня</p>
-          <p class="now-weather__top-icon" :style="currentWeatherIcon"></p>
+          <p class="now-weather__top-icon" :style="weatherIcon"></p>
         </div>
         <div class="now-weather__bottom">
-          <p class="now-weather__bottom-text">Время: {{ currentTime }}</p>
+          <p class="now-weather__bottom-text">Время: {{ time }}</p>
           <div class="now-weather__city-box">
             <p class="now-weather__bottom-text">Город: {{ cityName }}</p>
             <button
                 class="now-weather__city-button"
                 :class="isFavoriteCity && 'now-weather__city-button_active'"
-                @click="changeFavorite"
+                @click="$emit('changeFavoriteStatus')"
             ></button>
           </div>
         </div>
@@ -27,22 +27,22 @@
         <div class="details-weather__group">
           <div class="details-weather__icon details-weather__icon-temp"></div>
           <p class="details-weather__title">Температура</p>
-          <p class="details-weather__body">{{ currentTemp }}° - ощущается как {{ currentFeelsLikeTemp }}°</p>
+          <p class="details-weather__body">{{ temperature }}° - ощущается как {{ feelsLikeTemperature }}°</p>
         </div>
         <div class="details-weather__group">
           <div class="details-weather__icon details-weather__icon-humidity"></div>
           <p class="details-weather__title">Давление </p>
-          <p class="details-weather__body">{{ currentPressure }} мм ртутного столба - {{ currentPressureStatus }}</p>
+          <p class="details-weather__body">{{ pressure }} мм ртутного столба - {{ pressureStatus }}</p>
         </div>
         <div class="details-weather__group">
           <div class="details-weather__icon details-weather__icon-evaporator"></div>
           <p class="details-weather__title">Осадки</p>
-          <p class="details-weather__body">{{ currentWeatherCondition }}</p>
+          <p class="details-weather__body">{{ weatherCondition }}</p>
         </div>
         <div class="details-weather__group">
           <div class="details-weather__icon details-weather__icon-wind"></div>
           <p class="details-weather__title">Ветер</p>
-          <p class="details-weather__body">{{ currentWindSpeed }} м/с {{ currentWindRoute }} - {{ currentWindStatus }}</p>
+          <p class="details-weather__body">{{ windSpeed }} м/с {{ windRoute }} - {{ windStatus }}</p>
         </div>
       </div>
     </div>
@@ -50,86 +50,31 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
-import formatDataWeatherMixin from "@/mixins/formatDataWeatherMixin";
+import {mapState, mapGetters} from "vuex";
 import MyPreloader from "@/components/MyPreloader";
 
 export default {
   components: {MyPreloader},
-  mixins: [formatDataWeatherMixin],
-
-  methods: {
-    changeFavorite() {
-      if (this.isFavoriteCity) { // если в избранном
-        this.$store.commit('SET_IS_FAVORITE_CITY', false)
-        this.$store.commit('REMOVE_FAVORITES_CITES', this.cityName)
-      } else { // если не в избранном
-        this.$store.commit('SET_IS_FAVORITE_CITY', true)
-        this.$store.commit('ADD_FAVORITES_CITES', this.cityName)
-      }
-    },
-    checkCity() {
-      if (this.favoriteCites.includes(this.cityName)) {
-        this.$store.commit('SET_IS_FAVORITE_CITY', true)
-      } else {
-        this.$store.commit('SET_IS_FAVORITE_CITY', false)
-      }
-    }
-  },
 
   computed: {
-    ...mapGetters(['getCurrentWeather', 'getCityName', 'getIsFavoriteCites', 'getFavoriteCites', 'getIsLoading']),
-
-    isLoading() {
-      return this.getIsLoading
-    },
-    isFavoriteCity() {
-      return this.getIsFavoriteCites
-    },
-    favoriteCites() {
-      return this.getFavoriteCites
-    },
-    cityName() {
-      return this.getCityName
-    },
-    currentTemp() {
-      return Math.round(this.getCurrentWeather.temp)
-    },
-    currentFeelsLikeTemp() {
-      return Math.round(this.getCurrentWeather['feels_like'])
-    },
-    currentTime() {
-      return this.time(this.getCurrentWeather.dt)
-    },
-    currentPressure() {
-      return this.weatherPressure(this.getCurrentWeather.pressure)
-    },
-    currentPressureStatus() {
-      return this.pressureStatus(this.currentPressure)
-    },
-    currentWindSpeed() {
-      return Math.round(this.getCurrentWeather["wind_speed"])
-    },
-    currentWindRoute() {
-      return this.windRoute(this.getCurrentWeather['wind_deg'])
-    },
-    currentWindStatus() {
-      return this.windStatus(this.getCurrentWeather["wind_speed"])
-    },
-    currentWeatherCondition() {
-      const id = this.getCurrentWeather.weather[0].id
-      return this.weatherCondition(id)
-    },
-    currentWeatherIcon() {
-      const iconId = this.getCurrentWeather.weather[0].icon
-      return this.weatherIcon(iconId)
-    }
-  },
-  created() {
-    this.checkCity()
-  },
-  updated() {
-    this.checkCity()
+    ...mapState({
+      isLoading: state => state.isLoading,
+      cityName: state => state.cityName,
+      isFavoriteCity: state => state.favorite.isFavoriteCity,
+      favoriteCites: state => state.favorite.favoriteCites
+    }),
+    ...mapGetters({
+      time: 'weather/current/getTime',
+      temperature: 'weather/current/getTemperature',
+      feelsLikeTemperature: 'weather/current/getFeelsLikeTemperature',
+      pressure: 'weather/current/getWeatherPressure',
+      pressureStatus: 'weather/current/getPressureStatus',
+      windSpeed: 'weather/current/getWindSpeed',
+      windRoute: 'weather/current/getWindRoute',
+      windStatus: 'weather/current/getWindStatus',
+      weatherCondition: 'weather/current/getWeatherCondition',
+      weatherIcon: 'weather/current/getWeatherIcon',
+    }),
   }
 }
 </script>

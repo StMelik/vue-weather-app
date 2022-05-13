@@ -1,15 +1,12 @@
 <template>
   <MyHeader
-      v-model:search="searchQuery"
-      v-model:select="selectedCity"
-      @submit="submit"
+      @submitSearchQuery="submitSearchQuery"
   />
-<!--  <div v-if="!isLoading">-->
-    <WeatherDetails/>
-    <NavBar/>
-    <OnWeek/>
-<!--  </div>-->
-<!--  <h2 class="loader" v-else>Загрузка...</h2>-->
+  <WeatherDetails
+      @changeFavoriteStatus="handleFavoriteStatus"
+  />
+  <NavBar/>
+  <OnWeek/>
 </template>
 
 <script>
@@ -17,41 +14,77 @@ import MyHeader from "@/components/MyHeader";
 import WeatherDetails from "@/components/WeatherDetails";
 import NavBar from "@/components/NavBar";
 import OnWeek from "@/pages/OnWeek";
-import {mapActions, mapGetters} from "vuex";
+import {mapState, mapActions, mapMutations} from "vuex";
 
 export default {
   components: {NavBar, WeatherDetails, MyHeader, OnWeek},
 
-  data() {
-    return {
-      searchQuery: "",
-      selectedCity: ""
-    }
-  },
   methods: {
-    ...mapActions(['fetchCoordinates']),
+    ...mapActions({
+      fetchCoordinates: 'weather/fetchCoordinates',
+    }),
+    ...mapMutations({
+      SET_LOADING: 'SET_LOADING',
+      SET_CITY_NAME: 'SET_CITY_NAME',
+      SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
+      SET_IS_FAVORITE_CITY: 'favorite/SET_IS_FAVORITE_CITY',
+      REMOVE_FAVORITES_CITES: 'favorite/REMOVE_FAVORITES_CITES',
+      ADD_FAVORITES_CITES: 'favorite/ADD_FAVORITES_CITES'
+    }),
+
     async fetchWeather(city) {
-      this.$store.commit('SET_LOADING', true)
-      this.$store.commit('SET_CITY_NAME', city)
+      this.SET_LOADING(true)
+      this.SET_CITY_NAME(city)
       await this.fetchCoordinates(city)
     },
-    async submit() {
+
+    async submitSearchQuery() {
       await this.fetchWeather(this.searchQuery)
-      this.searchQuery = ""
+      this.SET_SEARCH_QUERY("")
+    },
+
+    checkIsFavoriteCity(city) {
+      if (this.favoriteCites.includes(city)) {
+        this.SET_IS_FAVORITE_CITY(true)
+      } else {
+        this.SET_IS_FAVORITE_CITY(false)
+      }
+    },
+
+    handleFavoriteStatus() {
+      if (this.isFavoriteCity) {
+        this.SET_IS_FAVORITE_CITY(false)
+        this.REMOVE_FAVORITES_CITES(this.cityName)
+      } else {
+        this.SET_IS_FAVORITE_CITY(true)
+        this.ADD_FAVORITES_CITES(this.cityName)
+      }
     }
   },
+
   computed: {
-    ...mapGetters(['getIsLoading']),
-    isLoading() {
-      return this.getIsLoading
-    }
+    ...mapState({
+      isLoading: state => state.isLoading,
+      selectedCity: state => state.selectedCity,
+      searchQuery: state => state.searchQuery,
+      cityName: state => state.cityName,
+      isFavoriteCity: state => state.favorite.isFavoriteCity,
+      favoriteCites: state => state.favorite.favoriteCites,
+    }),
   },
+
   created() {
-    this.fetchWeather("Краснодар")
+    this.fetchWeather(this.cityName);
+    this.checkIsFavoriteCity(this.cityName)
   },
+
   watch: {
     selectedCity(newCity) {
       this.fetchWeather(newCity)
+    },
+
+    cityName(newCity) {
+      this.checkIsFavoriteCity(newCity)
     }
   }
 }
