@@ -1,23 +1,50 @@
 <template>
   <header class="header">
-    <img class="header__logo" src="@/assets/images/logo.svg" alt="">
+    <img class="header__logo" src="@/assets/images/logo.svg" alt="Логотип">
     <h1 class="header__title">Vue weather</h1>
+    <form class="header__form" @submit.prevent="$emit('submit')">
+      <input
+          type="text"
+          class="header__input"
+          placeholder="Поиск..."
+          :value="search"
+          @input="$emit('update:search', $event.target.value)"
+          required
+      >
+      <button class="header__submit"></button>
+    </form>
     <button class="header__button"></button>
-    <select name="city" id="city" class="header__select" @change="$emit('onSelect', $event.target.value)">
-      <option value="" disabled selected>Выбрать город</option>
-      <option value="Краснодар">Краснодар</option>
-      <option value="Москва">Москва</option>
-      <option value="Киев">Киев</option>
-      <option value="Ейск">Ейск</option>
-      <option value="Белгород">Белгород</option>
-      <option value="Перу">Перу</option>
+    <select
+        name="city"
+        id="city"
+        class="header__select"
+        :value="select"
+        @change="$emit('update:select', $event.target.value)"
+    >
+      <option value="" disabled selected>Избранные</option>
+      <option
+          v-for="city in favoriteCites"
+          :key="city"
+          :value="city"
+      >{{city}}</option>
     </select>
   </header>
 </template>
 
 <script>
 export default {
-
+  props: {
+    search: String,
+    select: String,
+  },
+  computed: {
+    favoriteCites() {
+      return this.$store.getters.getFavoriteCites
+    }
+  },
+  mounted() {
+    console.log(this.$store.getters.getFavoriteCites)
+  }
 }
 </script>
 
@@ -42,14 +69,46 @@ export default {
   text-transform: uppercase;
 }
 
+.header__form {
+  display: flex;
+  width: 300px;
+  margin: 0 auto;
+}
+
+.header__input {
+  background-color: #4F4F4F;
+  color: white;
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px;
+  border-radius: 10px 0 0 10px;
+}
+
+.header__input::placeholder {
+  color: #939CB0;
+  font-size: 16px;
+}
+
+.header__submit {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  background-color: #4F4F4F;
+  border-radius: 0 10px 10px 0;
+  background-image: url('@/assets/images/search-icon.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 23px 23px;
+}
+
 .header__button {
-  margin-left: auto;
   width: 35px;
   height: 35px;
   background-image: url('@/assets/images/invert-colors.svg');
   background-repeat: no-repeat;
   background-position: center;
-
 }
 
 .header__select {

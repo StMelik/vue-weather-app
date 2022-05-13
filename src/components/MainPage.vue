@@ -1,5 +1,9 @@
 <template>
-  <MyHeader @onSelect="changeCity"/>
+  <MyHeader
+      v-model:search="searchQuery"
+      v-model:select="selectedCity"
+      @submit="submit"
+  />
   <div v-if="!isLoading">
     <WeatherDetails/>
     <NavBar/>
@@ -17,12 +21,23 @@ import {mapActions, mapGetters} from "vuex";
 
 export default {
   components: {NavBar, WeatherDetails, MyHeader, OnWeek},
+
+  data() {
+    return {
+      searchQuery: "",
+      selectedCity: ""
+    }
+  },
   methods: {
     ...mapActions(['fetchCoordinates']),
-    changeCity(cityName) {
+    async fetchWeather(city) {
       this.$store.commit('SET_LOADING', true)
-      this.$store.commit('SET_CITY_NAME', cityName)
-      this.fetchCoordinates(cityName)
+      this.$store.commit('SET_CITY_NAME', city)
+      await this.fetchCoordinates(city)
+    },
+    async submit() {
+      await this.fetchWeather(this.searchQuery)
+      this.searchQuery = ""
     }
   },
   computed: {
@@ -32,7 +47,12 @@ export default {
     }
   },
   created() {
-    this.fetchCoordinates('Краснодар')
+    this.fetchWeather("Краснодар")
+  },
+  watch: {
+    selectedCity(newCity) {
+      this.fetchWeather(newCity)
+    }
   }
 }
 </script>
