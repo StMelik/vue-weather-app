@@ -1,7 +1,7 @@
 <template>
   <nav class="nav">
     <button class="nav__button nav__button_active">На неделю</button>
-    <button class="nav__button">На месяц</button>
+    <button disabled class="nav__button disabled-button">На месяц</button>
   </nav>
 </template>
 

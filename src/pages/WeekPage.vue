@@ -35,7 +35,8 @@ export default {
 <style scoped>
 .week {
   display: flex;
-  column-gap: 20px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 </style>

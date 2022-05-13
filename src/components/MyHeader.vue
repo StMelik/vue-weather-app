@@ -13,7 +13,7 @@
       >
       <button class="header__submit"></button>
     </form>
-    <button class="header__button"></button>
+    <button disabled class="header__button disabled-button"></button>
     <select
         name="city"
         id="city"

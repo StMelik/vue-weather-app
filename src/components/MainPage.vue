@@ -106,7 +106,8 @@ export default {
   position: relative;
 }
 
-.loader {
-  font-size: 84px;
+.disabled-button {
+  opacity: .5;
+  cursor: default;
 }
 </style>

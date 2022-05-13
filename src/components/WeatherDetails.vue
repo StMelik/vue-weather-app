@@ -218,6 +218,7 @@ export default {
   border-radius: 50%;
   background-repeat: no-repeat;
   background-position: center;
+  flex-shrink: 0;
 }
 
 .details-weather__icon-temp {
