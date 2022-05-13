@@ -11,6 +11,7 @@ export default {
     mutations: {
         SET_WEATHER(state, {current, daily}) {
             state.current = current
+            daily.pop()
             state.daily = daily
         }
     },
@@ -34,6 +35,6 @@ export default {
         }
     },
     modules: {
-        current
+        current,
     }
 }

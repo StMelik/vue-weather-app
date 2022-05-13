@@ -14,7 +14,7 @@
 import MyHeader from "@/components/MyHeader";
 import WeatherDetails from "@/components/WeatherDetails";
 import NavBar from "@/components/NavBar";
-import OnWeek from "@/pages/OnWeek";
+import OnWeek from "@/pages/WeekPage";
 import {mapState, mapActions, mapMutations} from "vuex";
 
 export default {
@@ -103,7 +103,7 @@ export default {
   box-shadow: 2px 5px 25px -3px rgba(180, 180, 180, 0.25);
   border-radius: 0px 0px 20px 20px;
   padding: 20px;
-  display: flex;
+  position: relative;
 }
 
 .loader {
