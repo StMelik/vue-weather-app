@@ -1,6 +1,7 @@
 <template>
   <MyHeader
       @submitSearchQuery="submitSearchQuery"
+      @changeSelect="handleSelectCity"
   />
   <WeatherDetails
       @changeFavoriteStatus="handleFavoriteStatus"
@@ -27,15 +28,17 @@ export default {
       SET_LOADING: 'SET_LOADING',
       SET_CITY_NAME: 'SET_CITY_NAME',
       SET_SEARCH_QUERY: 'SET_SEARCH_QUERY',
+      SET_SELECTED_CITY: 'SET_SELECTED_CITY',
       SET_IS_FAVORITE_CITY: 'favorite/SET_IS_FAVORITE_CITY',
       REMOVE_FAVORITES_CITES: 'favorite/REMOVE_FAVORITES_CITES',
       ADD_FAVORITES_CITES: 'favorite/ADD_FAVORITES_CITES'
     }),
 
     async fetchWeather(city) {
+      const cityName = city[0].toUpperCase() + city.slice(1)
       this.SET_LOADING(true)
-      this.SET_CITY_NAME(city)
-      await this.fetchCoordinates(city)
+      this.SET_CITY_NAME(cityName)
+      await this.fetchCoordinates(cityName)
     },
 
     async submitSearchQuery() {
@@ -46,8 +49,10 @@ export default {
     checkIsFavoriteCity(city) {
       if (this.favoriteCites.includes(city)) {
         this.SET_IS_FAVORITE_CITY(true)
+        this.SET_SELECTED_CITY(city)
       } else {
         this.SET_IS_FAVORITE_CITY(false)
+        this.SET_SELECTED_CITY('')
       }
     },
 
@@ -55,10 +60,16 @@ export default {
       if (this.isFavoriteCity) {
         this.SET_IS_FAVORITE_CITY(false)
         this.REMOVE_FAVORITES_CITES(this.cityName)
+        this.SET_SELECTED_CITY('')
       } else {
         this.SET_IS_FAVORITE_CITY(true)
         this.ADD_FAVORITES_CITES(this.cityName)
+        this.SET_SELECTED_CITY(this.cityName)
       }
+    },
+
+    handleSelectCity(newCity) {
+      this.fetchWeather(newCity)
     }
   },
 
@@ -79,10 +90,6 @@ export default {
   },
 
   watch: {
-    selectedCity(newCity) {
-      this.fetchWeather(newCity)
-    },
-
     cityName(newCity) {
       this.checkIsFavoriteCity(newCity)
     }

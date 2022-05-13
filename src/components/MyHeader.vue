@@ -19,7 +19,7 @@
         id="city"
         class="header__select"
         :value="selectedCity"
-        @change="SET_SELECTED_CITY($event.target.value)"
+        @change="changeSelect($event.target.value)"
     >
       <option value="" disabled selected>Избранные</option>
       <option
@@ -36,7 +36,12 @@ import {mapState, mapMutations} from "vuex";
 
 export default {
   methods: {
-    ...mapMutations(['SET_SELECTED_CITY', 'SET_SEARCH_QUERY'])
+    ...mapMutations(['SET_SELECTED_CITY', 'SET_SEARCH_QUERY']),
+
+    changeSelect(city) {
+      this.SET_SELECTED_CITY(city)
+      this.$emit('changeSelect', city)
+    }
   },
 
   computed: {
