@@ -31,7 +31,8 @@ export default {
       SET_SELECTED_CITY: 'SET_SELECTED_CITY',
       SET_IS_FAVORITE_CITY: 'favorite/SET_IS_FAVORITE_CITY',
       REMOVE_FAVORITES_CITES: 'favorite/REMOVE_FAVORITES_CITES',
-      ADD_FAVORITES_CITES: 'favorite/ADD_FAVORITES_CITES'
+      ADD_FAVORITES_CITES: 'favorite/ADD_FAVORITES_CITES',
+      LOAD_FAVORITE_CITES: 'favorite/LOAD_FAVORITE_CITES'
     }),
 
     async fetchWeather(city) {
@@ -60,10 +61,12 @@ export default {
       if (this.isFavoriteCity) {
         this.SET_IS_FAVORITE_CITY(false)
         this.REMOVE_FAVORITES_CITES(this.cityName)
+        localStorage.setItem('favoriteSites', JSON.stringify(this.favoriteCites))
         this.SET_SELECTED_CITY('')
       } else {
         this.SET_IS_FAVORITE_CITY(true)
         this.ADD_FAVORITES_CITES(this.cityName)
+        localStorage.setItem('favoriteSites', JSON.stringify(this.favoriteCites))
         this.SET_SELECTED_CITY(this.cityName)
       }
     },
@@ -85,6 +88,9 @@ export default {
   },
 
   created() {
+    if (localStorage.getItem('favoriteSites')) {
+      this.LOAD_FAVORITE_CITES(JSON.parse(localStorage.getItem('favoriteSites')))
+    }
     this.fetchWeather(this.cityName);
     this.checkIsFavoriteCity(this.cityName)
   },
