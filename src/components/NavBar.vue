@@ -31,8 +31,4 @@ export default {
 .nav__button_active {
   background-color: #4793FF;
 }
-
-.nav__button:not(.nav__button_active):hover {
-  opacity: .5;
-}
 </style>
